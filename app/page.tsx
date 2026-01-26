@@ -40,7 +40,7 @@ export default function App() {
       {/* Header */}
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl">
         <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-4 flex justify-between items-center shadow-2xl">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.href='/'}>
             <div className="w-10 h-10 bg-[#6C2BFF] rounded-xl flex items-center justify-center font-black text-white italic shadow-[0_0_20px_rgba(108,43,255,0.6)]">
               CA
             </div>
@@ -48,12 +48,26 @@ export default function App() {
           </div>
           
           <div className="hidden lg:flex gap-10 text-[10px] font-bold tracking-[0.4em] text-gray-400">
-<button onClick={() => window.location.href='/plans'} className="hover:text-[#6C2BFF] transition-all uppercase">Plans</button>            <button className="hover:text-[#6C2BFF] transition-all">ABOUT US</button>
+            <button 
+              onClick={() => window.location.href='/plans'} 
+              className="hover:text-[#6C2BFF] transition-all uppercase"
+            >
+              Plans
+            </button>
+            <button 
+              onClick={() => window.location.href='/about-us'}
+              className="hover:text-[#6C2BFF] transition-all uppercase"
+            >
+              About us
+            </button>
           </div>
 
           <div className="flex gap-4">
             <button className="text-[11px] font-bold tracking-widest hover:text-[#6C2BFF] transition-all px-4 py-2 uppercase">Login</button>
-            <button className="bg-white text-black px-6 py-2.5 rounded-xl text-[11px] font-black tracking-widest hover:bg-[#6C2BFF] hover:text-white transition-all active:scale-95 shadow-xl uppercase">
+            <button 
+              onClick={() => window.location.href='/plans'}
+              className="bg-white text-black px-6 py-2.5 rounded-xl text-[11px] font-black tracking-widest hover:bg-[#6C2BFF] hover:text-white transition-all active:scale-95 shadow-xl uppercase"
+            >
               Register
             </button>
           </div>
@@ -85,6 +99,7 @@ export default function App() {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <motion.button 
+              onClick={() => window.location.href='/plans'}
               whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(108,43,255,0.5)" }}
               whileTap={{ scale: 0.95 }}
               className="px-14 py-7 bg-[#6C2BFF] text-white text-xl font-black rounded-2xl transition-all shadow-lg uppercase"
