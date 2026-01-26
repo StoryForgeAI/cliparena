@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-// --- CUSTOM SVG ICONS (Internal, no external dependencies) ---
+// --- CUSTOM SVG ICONS ---
 const ZapIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
 );
@@ -31,13 +31,13 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] selection:text-white overflow-x-hidden font-sans">
       
-      {/* --- BACKGROUND AMBIENCE --- */}
+      {/* Background Ambience */}
       <div className="fixed inset-0 overflow-hidden -z-10">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6C2BFF]/10 blur-[150px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00D1B2]/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* --- STICKY NAVIGATION --- */}
+      {/* Header */}
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl">
         <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-4 flex justify-between items-center shadow-2xl">
           <div className="flex items-center gap-3">
@@ -53,15 +53,15 @@ export default function App() {
           </div>
 
           <div className="flex gap-4">
-            <button className="text-[11px] font-bold tracking-widest hover:text-[#6C2BFF] transition-all px-4 py-2">LOGIN</button>
-            <button className="bg-white text-black px-6 py-2.5 rounded-xl text-[11px] font-black tracking-widest hover:bg-[#6C2BFF] hover:text-white transition-all active:scale-95 shadow-xl">
-              REGISTER
+            <button className="text-[11px] font-bold tracking-widest hover:text-[#6C2BFF] transition-all px-4 py-2 uppercase">Login</button>
+            <button className="bg-white text-black px-6 py-2.5 rounded-xl text-[11px] font-black tracking-widest hover:bg-[#6C2BFF] hover:text-white transition-all active:scale-95 shadow-xl uppercase">
+              Register
             </button>
           </div>
         </nav>
       </header>
 
-      {/* --- HERO SECTION --- */}
+      {/* Hero Section */}
       <main className="relative pt-52 pb-20 px-6 flex flex-col items-center">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -81,27 +81,27 @@ export default function App() {
           </h1>
 
           <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-2xl mb-16 leading-relaxed font-light">
-            ClipArena is the digital coliseum where the community decides. No bots, no clickbait, just pure <span className="text-white font-bold tracking-tight underline decoration-[#6C2BFF] decoration-2 underline-offset-4 text-glow">Value Competition</span>.
+            ClipArena is the digital coliseum where the community decides. No bots, no clickbait, just pure <span className="text-white font-bold tracking-tight underline decoration-[#6C2BFF] decoration-2 underline-offset-4">Value Competition</span>.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <motion.button 
               whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(108,43,255,0.5)" }}
               whileTap={{ scale: 0.95 }}
-              className="px-14 py-7 bg-[#6C2BFF] text-white text-xl font-black rounded-2xl transition-all shadow-lg"
+              className="px-14 py-7 bg-[#6C2BFF] text-white text-xl font-black rounded-2xl transition-all shadow-lg uppercase"
             >
-              GET STARTED
+              Get Started
             </motion.button>
-            <button className="group flex items-center gap-4 text-xs font-black tracking-[0.2em] hover:text-[#00D1B2] transition-all py-4 px-6">
+            <button className="group flex items-center gap-4 text-xs font-black tracking-[0.2em] hover:text-[#00D1B2] transition-all py-4 px-6 uppercase">
               <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#00D1B2] transition-colors">
                 <PlayIcon />
               </div>
-              WATCH MANIFESTO
+              Watch Manifesto
             </button>
           </div>
         </motion.div>
 
-        {/* --- ARENA FEATURE CARDS --- */}
+        {/* Feature Cards */}
         <section className="mt-48 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-10">
           <FeatureCard 
             icon={<ZapIcon />} 
@@ -124,16 +124,17 @@ export default function App() {
           />
         </section>
 
-        {/* --- ELECTRIC TEXT SECTION --- */}
+        {/* Manifesto Text Section */}
         <section className="mt-48 py-32 w-full bg-[#1A1D26]/30 border-y border-white/5 relative overflow-hidden flex flex-col items-center">
           <div className="max-w-4xl mx-auto text-center relative z-10 px-6">
-            <motion.h2 
+            <motion.div 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              className="text-[#6C2BFF] text-4xl md:text-7xl font-black mb-12 italic tracking-tighter leading-none"
+              className="text-[#6C2BFF] text-4xl md:text-7xl font-black mb-12 italic tracking-tighter leading-none uppercase"
             >
-              "THE ALGORITHM IS DEAD. <br /> LONG LIVE THE CREATOR."
-            </h2>
+              <div>THE ALGORITHM IS DEAD.</div>
+              <div>LONG LIVE THE CREATOR.</div>
+            </motion.div>
             <div className="h-1.5 w-32 bg-[#00D1B2] mx-auto mb-12 rounded-full shadow-[0_0_20px_#00D1B2]" />
             <p className="text-gray-300 text-xl md:text-3xl leading-relaxed font-light">
               Current platforms reward retention tricks and clickbait hooks. We reward <span className="text-white font-bold italic">real creativity</span>. 
@@ -142,7 +143,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* --- FOOTER --- */}
+        {/* Footer */}
         <footer className="mt-52 pb-24 text-center">
           <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-10 border border-white/10">
             <div className="w-2 h-2 bg-[#6C2BFF] rounded-full animate-ping" />
@@ -162,9 +163,6 @@ export default function App() {
         .animate-gradient {
           background-size: 200% 200%;
           animation: gradient 8s ease infinite;
-        }
-        .text-glow {
-          text-shadow: 0 0 10px rgba(108,43,255,0.3);
         }
       `}</style>
     </div>
@@ -190,7 +188,7 @@ function FeatureCard({ icon, title, text, delay, highlight = false }: any) {
       }`}>
         {icon}
       </div>
-      <h3 className={`text-2xl font-black tracking-widest mb-6 ${highlight ? 'text-white' : 'text-gray-100'}`}>
+      <h3 className={`text-2xl font-black tracking-widest mb-6 uppercase ${highlight ? 'text-white' : 'text-gray-100'}`}>
         {title}
       </h3>
       <p className={`text-base leading-relaxed ${highlight ? 'text-white/80' : 'text-gray-400'}`}>
