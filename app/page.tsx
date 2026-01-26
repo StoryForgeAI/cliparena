@@ -1,26 +1,60 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, ShieldCheck, Zap, ArrowRight, Play } from 'lucide-react';
 
-export default function LandingPage() {
+// --- CUSTOM SVG ICONS (Internal, no external dependencies) ---
+const ZapIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+);
+
+const TrophyIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+);
+
+const ShieldIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+);
+
+const PlayIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+);
+
+export default function App() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
     <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] selection:text-white overflow-x-hidden font-sans">
       
-      {/* --- LEBEGŐ HEADER --- */}
-      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-4xl">
-        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 flex justify-between items-center shadow-2xl">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#6C2BFF] rounded-lg flex items-center justify-center font-black text-white italic shadow-[0_0_15px_rgba(108,43,255,0.5)]">CA</div>
-            <span className="font-black tracking-tighter text-xl">CLIPARENA</span>
+      {/* --- BACKGROUND AMBIENCE --- */}
+      <div className="fixed inset-0 overflow-hidden -z-10">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6C2BFF]/10 blur-[150px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00D1B2]/5 blur-[120px] rounded-full" />
+      </div>
+
+      {/* --- STICKY NAVIGATION --- */}
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl">
+        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-4 flex justify-between items-center shadow-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#6C2BFF] rounded-xl flex items-center justify-center font-black text-white italic shadow-[0_0_20px_rgba(108,43,255,0.6)]">
+              CA
+            </div>
+            <span className="font-black tracking-tighter text-2xl hidden sm:block">CLIPARENA</span>
           </div>
-          <div className="hidden md:flex gap-8 text-[11px] font-bold tracking-[0.2em] text-gray-400">
-            <button className="hover:text-[#6C2BFF] transition-colors">CREDITS</button>
-            <button className="hover:text-[#6C2BFF] transition-colors">ABOUT US</button>
+          
+          <div className="hidden lg:flex gap-10 text-[10px] font-bold tracking-[0.4em] text-gray-400">
+            <button className="hover:text-[#6C2BFF] transition-all">CREDITS</button>
+            <button className="hover:text-[#6C2BFF] transition-all">ABOUT US</button>
           </div>
+
           <div className="flex gap-4">
             <button className="text-[11px] font-bold tracking-widest hover:text-[#6C2BFF] transition-all px-4 py-2">LOGIN</button>
-            <button className="bg-white text-black px-5 py-2 rounded-xl text-[11px] font-black tracking-widest hover:bg-[#6C2BFF] hover:text-white transition-all">
+            <button className="bg-white text-black px-6 py-2.5 rounded-xl text-[11px] font-black tracking-widest hover:bg-[#6C2BFF] hover:text-white transition-all active:scale-95 shadow-xl">
               REGISTER
             </button>
           </div>
@@ -28,132 +62,146 @@ export default function LandingPage() {
       </header>
 
       {/* --- HERO SECTION --- */}
-      <section className="relative pt-52 pb-20 px-6 flex flex-col items-center justify-center min-h-screen text-center">
-        {/* Háttér fények */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#6C2BFF]/20 blur-[150px] rounded-full -z-10 animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-[#00D1B2]/10 blur-[100px] rounded-full -z-10" />
-        
+      <main className="relative pt-52 pb-20 px-6 flex flex-col items-center">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center max-w-5xl"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#6C2BFF]/30 bg-[#6C2BFF]/5 text-[#6C2BFF] text-[10px] font-black tracking-[0.3em] mb-8">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6C2BFF] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#6C2BFF]"></span>
-            </span>
-            THE ANTI-ALGORITHM REVOLUTION
+          <div className="inline-block px-5 py-2 rounded-full border border-[#6C2BFF]/30 bg-[#6C2BFF]/5 text-[#6C2BFF] text-[10px] font-black tracking-[0.4em] mb-12 uppercase">
+            The Attention Economy is Over
           </div>
 
-          <h1 className="text-6xl md:text-[100px] font-black mb-8 tracking-[ -0.05em] leading-[0.9]">
-            A TE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6C2BFF] to-[#a47dff]">TEHETSÉGED</span><br />
-            NEM EGY <span className="italic">ADAT.</span>
+          <h1 className="text-6xl md:text-[130px] font-black mb-8 tracking-tighter leading-[0.8] uppercase">
+            SKILL. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6C2BFF] via-[#a47dff] to-[#00D1B2] animate-gradient">
+              NOT ALGORITHM.
+            </span>
           </h1>
 
-          <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-12 leading-relaxed font-light">
-            Eleged van a clickbaitből? Itt nem az algoritmus dönt, hanem a közösség. 
-            Mindenki bíró, mindenki versenyző. <span className="text-white font-medium">Érték = Pénz.</span>
+          <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-2xl mb-16 leading-relaxed font-light">
+            ClipArena is the digital coliseum where the community decides. No bots, no clickbait, just pure <span className="text-white font-bold tracking-tight underline decoration-[#6C2BFF] decoration-2 underline-offset-4 text-glow">Value Competition</span>.
           </p>
           
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <motion.button 
-              whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(108,43,255,0.4)" }}
-              className="px-12 py-6 bg-[#6C2BFF] text-white text-lg font-black rounded-2xl flex items-center gap-3 transition-all"
+              whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(108,43,255,0.5)" }}
+              whileTap={{ scale: 0.95 }}
+              className="px-14 py-7 bg-[#6C2BFF] text-white text-xl font-black rounded-2xl transition-all shadow-lg"
             >
-              LÉPJ BE AZ ARÉNÁBA <ArrowRight size={20} />
+              GET STARTED
             </motion.button>
-            <button className="flex items-center gap-3 text-sm font-bold tracking-widest hover:text-[#6C2BFF] transition-all">
-              <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center"><Play size={14} fill="white" /></div>
-             HOGYAN MŰKÖDIK?
+            <button className="group flex items-center gap-4 text-xs font-black tracking-[0.2em] hover:text-[#00D1B2] transition-all py-4 px-6">
+              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#00D1B2] transition-colors">
+                <PlayIcon />
+              </div>
+              WATCH MANIFESTO
             </button>
           </div>
         </motion.div>
-      </section>
 
-      {/* --- MANIFESZTO SECTION (ELEKTROMOS LILA) --- */}
-      <section className="py-32 px-6 bg-[#0A0C11] relative overflow-hidden">
-         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-12">
-               <motion.h2 
-                 initial={{ x: -50, opacity: 0 }}
-                 whileInView={{ x: 0, opacity: 1 }}
-                 className="text-5xl font-black leading-tight"
-               >
-                 A FIGYELEM <br />
-                 <span className="text-[#00D1B2]">NEM JUTALOM.</span>
-               </motion.h2>
-               
-               <div className="space-y-8">
-                  <FeatureRow 
-                    icon={<Zap className="text-[#6C2BFF]" />} 
-                    title="VALÓDI DÖNTÉS" 
-                    desc="Heti 3 szavazatod van. Ne szórd el. Olyan tartalomra add, ami tényleg értékes."
-                  />
-                  <FeatureRow 
-                    icon={<ShieldCheck className="text-[#6C2BFF]" />} 
-                    title="ZÉRÓ CSALÁS" 
-                    desc="YouTube API hitelesítés. Csak a saját, eredeti videóiddal versenyezhetsz."
-                  />
-                  <FeatureRow 
-                    icon={<Trophy className="text-[#6C2BFF]" />} 
-                    title="KÖZÖSSÉGI DÍJALAP" 
-                    desc="Minden $1 előfizetés 45%-a a hét legjobb alkotóinak zsebébe megy."
-                  />
-               </div>
-            </div>
+        {/* --- ARENA FEATURE CARDS --- */}
+        <section className="mt-48 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-10">
+          <FeatureCard 
+            icon={<ZapIcon />} 
+            title="HUMAN VOTE" 
+            text="You get 3 votes per week. Use them wisely. Every vote is a conscious decision for real value."
+            delay={0.2}
+          />
+          <FeatureCard 
+            icon={<TrophyIcon />} 
+            title="PRIZE POOL" 
+            text="45% of all subscription revenue goes directly to the weekly top creators. Zero ads."
+            delay={0.4}
+            highlight
+          />
+          <FeatureCard 
+            icon={<ShieldIcon />} 
+            title="VERIFIED CONTENT" 
+            text="YouTube API integration ensures content ownership. No stolen clips. Only original skill."
+            delay={0.6}
+          />
+        </section>
 
-            <div className="relative">
-               <div className="absolute -inset-4 bg-[#6C2BFF]/20 rounded-[30px] blur-2xl animate-pulse" />
-               <div className="relative bg-[#1A1D26] border border-white/10 p-10 rounded-[30px] shadow-3xl">
-                  <div className="flex justify-between mb-12">
-                    <div className="space-y-2">
-                       <div className="h-2 w-32 bg-[#6C2BFF] rounded-full" />
-                       <div className="h-2 w-20 bg-white/10 rounded-full" />
-                    </div>
-                    <div className="text-[#00D1B2] font-mono text-xl font-bold">#TOP_1</div>
-                  </div>
-                  <div className="aspect-video w-full bg-[#0F1117] rounded-2xl flex items-center justify-center border border-white/5 mb-8">
-                     <span className="text-[10px] text-gray-600 font-mono">ENCRYPTED VIDEO FEED</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-[#6C2BFF] to-[#00D1B2]" />
-                    <div className="text-right">
-                       <div className="text-xs text-gray-500">CURRENT VOTES</div>
-                       <div className="text-2xl font-black text-white">2,842</div>
-                    </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </section>
+        {/* --- ELECTRIC TEXT SECTION --- */}
+        <section className="mt-48 py-32 w-full bg-[#1A1D26]/30 border-y border-white/5 relative overflow-hidden flex flex-col items-center">
+          <div className="max-w-4xl mx-auto text-center relative z-10 px-6">
+            <motion.h2 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-[#6C2BFF] text-4xl md:text-7xl font-black mb-12 italic tracking-tighter leading-none"
+            >
+              "THE ALGORITHM IS DEAD. <br /> LONG LIVE THE CREATOR."
+            </h2>
+            <div className="h-1.5 w-32 bg-[#00D1B2] mx-auto mb-12 rounded-full shadow-[0_0_20px_#00D1B2]" />
+            <p className="text-gray-300 text-xl md:text-3xl leading-relaxed font-light">
+              Current platforms reward retention tricks and clickbait hooks. We reward <span className="text-white font-bold italic">real creativity</span>. 
+              $1 a month creates a clean, fair ecosystem where attention does not equal value. Value equals reward.
+            </p>
+          </div>
+        </section>
 
-      {/* --- FOOTER CTA --- */}
-      <footer className="py-40 text-center px-6">
-        <h3 className="text-3xl md:text-5xl font-black mb-12 italic tracking-tighter">
-          KÉSZ VAGY KILÉPNI A MÁTRIXBÓL?
-        </h3>
-        <button className="px-16 py-8 border border-white/10 hover:border-[#6C2BFF] rounded-full text-sm font-black tracking-[0.4em] transition-all hover:bg-[#6C2BFF]/10">
-          JOIN THE REVOLUTION
-        </button>
-        <div className="mt-32 text-gray-600 text-[10px] font-mono tracking-widest">
-          CLIPARENA © 2026 // NO ALGORITHMS BEYOND THIS POINT
-        </div>
-      </footer>
+        {/* --- FOOTER --- */}
+        <footer className="mt-52 pb-24 text-center">
+          <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-10 border border-white/10">
+            <div className="w-2 h-2 bg-[#6C2BFF] rounded-full animate-ping" />
+          </div>
+          <p className="text-gray-600 font-mono text-[10px] tracking-[0.6em] uppercase">
+            CLIPARENA // NO ALGORITHMS BEYOND THIS POINT // 2026
+          </p>
+        </footer>
+      </main>
+
+      <style jsx global>{`
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 8s ease infinite;
+        }
+        .text-glow {
+          text-shadow: 0 0 10px rgba(108,43,255,0.3);
+        }
+      `}</style>
     </div>
   );
 }
 
-function FeatureRow({ icon, title, desc }: { icon: any, title: string, desc: string }) {
+function FeatureCard({ icon, title, text, delay, highlight = false }: any) {
   return (
-    <div className="flex gap-6 group">
-      <div className="mt-1 w-12 h-12 shrink-0 rounded-2xl bg-[#6C2BFF]/10 flex items-center justify-center border border-[#6C2BFF]/20 group-hover:scale-110 transition-transform">
+    <motion.div 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.6 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -12, scale: 1.02 }}
+      className={`relative p-12 rounded-[40px] border transition-all duration-500 group ${
+        highlight 
+        ? 'bg-[#6C2BFF] border-transparent shadow-[0_30px_60px_rgba(108,43,255,0.4)]' 
+        : 'bg-[#1A1D26] border-white/5 hover:border-[#6C2BFF]/40'
+      }`}
+    >
+      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-10 transition-transform group-hover:rotate-12 ${
+        highlight ? 'bg-white text-[#6C2BFF]' : 'bg-[#6C2BFF]/10 text-[#6C2BFF]'
+      }`}>
         {icon}
       </div>
-      <div>
-        <h4 className="font-black text-sm tracking-widest mb-2">{title}</h4>
-        <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
-      </div>
-    </div>
+      <h3 className={`text-2xl font-black tracking-widest mb-6 ${highlight ? 'text-white' : 'text-gray-100'}`}>
+        {title}
+      </h3>
+      <p className={`text-base leading-relaxed ${highlight ? 'text-white/80' : 'text-gray-400'}`}>
+        {text}
+      </p>
+      
+      {!highlight && (
+        <div className="absolute top-12 right-12 opacity-10 group-hover:opacity-100 transition-opacity">
+          <div className="w-1.5 h-1.5 bg-[#6C2BFF] rounded-full" />
+        </div>
+      )}
+    </motion.div>
   );
 }
