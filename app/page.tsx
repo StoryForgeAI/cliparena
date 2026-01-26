@@ -48,8 +48,7 @@ export default function App() {
           </div>
           
           <div className="hidden lg:flex gap-10 text-[10px] font-bold tracking-[0.4em] text-gray-400">
-            <button className="hover:text-[#6C2BFF] transition-all">CREDITS</button>
-            <button className="hover:text-[#6C2BFF] transition-all">ABOUT US</button>
+<button onClick={() => window.location.href='/plans'} className="hover:text-[#6C2BFF] transition-all uppercase">Plans</button>            <button className="hover:text-[#6C2BFF] transition-all">ABOUT US</button>
           </div>
 
           <div className="flex gap-4">
