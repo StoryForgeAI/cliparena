@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // --- CUSTOM SVG ICONS ---
 const ZapIcon = () => (
@@ -19,17 +19,12 @@ const PlayIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
 );
 
-const MenuIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-);
-
-const XIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+const RocketIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2s-7 10-8.95 12a22 22 0 0 1-1.05 1z"></path><path d="m9 12 2-2"></path></svg>
 );
 
 export default function App() {
   const [mounted, setMounted] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -42,155 +37,236 @@ export default function App() {
       
       {/* Background Ambience */}
       <div className="fixed inset-0 overflow-hidden -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] bg-[#6C2BFF]/10 blur-[150px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#00D1B2]/5 blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6C2BFF]/10 blur-[150px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00D1B2]/5 blur-[120px] rounded-full" />
       </div>
 
       {/* Header */}
-      <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-5xl">
-        <nav className="bg-[#1A1D26]/90 backdrop-blur-xl border border-white/10 rounded-2xl px-4 md:px-8 py-3 md:py-4 flex justify-between items-center shadow-2xl relative">
-          
-          {/* Logo Section */}
-          <div className="flex items-center gap-2 md:gap-3 cursor-pointer group shrink-0" onClick={() => window.location.href='/'}>
-            <div className="w-9 h-9 md:w-10 md:h-10 bg-[#6C2BFF] rounded-xl flex items-center justify-center font-black text-white italic shadow-[0_0_15px_rgba(108,43,255,0.4)] group-hover:scale-105 transition-transform">
-              CA
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
+        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-3xl px-6 md:px-10 py-5 flex justify-between items-center shadow-2xl">
+          <div className="flex items-center gap-4 cursor-pointer" onClick={() => window.location.href='/'}>
+            {/* LOGO IMAGE REPLACEMENT AREA */}
+            <div className="relative w-12 h-12 flex-shrink-0">
+               <img 
+                 src="https://ibb.co/ynLqwzW0" 
+                 alt="ClipArena Logo" 
+                 className="w-full h-full object-cover rounded-xl shadow-[0_0_15px_rgba(108,43,255,0.4)] border border-[#6C2BFF]/20"
+                 onError={(e) => {
+                    // Fallback if image fails to load
+                    e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236C2BFF'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='40' fill='white' font-weight='bold' font-style='italic'%3ECA%3C/text%3E%3C/svg%3E";
+                 }}
+               />
             </div>
-            <span className="font-black tracking-tighter text-xl md:text-2xl block">CLIPARENA</span>
+            <span className="font-black tracking-tighter text-2xl hidden sm:block uppercase italic">CLIPARENA</span>
           </div>
           
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-8 text-[10px] font-bold tracking-[0.4em] text-gray-400">
-            <button onClick={() => window.location.href='/plans'} className="hover:text-[#6C2BFF] transition-all uppercase">Plans</button>
-            <button onClick={() => window.location.href='/about-us'} className="hover:text-[#6C2BFF] transition-all uppercase">About us</button>
+          <div className="hidden lg:flex gap-12 text-[11px] font-black tracking-[0.4em] text-gray-400">
+            <button 
+              onClick={() => window.location.href='/plans'} 
+              className="hover:text-[#6C2BFF] transition-all uppercase"
+            >
+              Plans
+            </button>
+            <button 
+              onClick={() => window.location.href='/about-us'}
+              className="hover:text-[#6C2BFF] transition-all uppercase"
+            >
+              About us
+            </button>
+            <button className="hover:text-[#6C2BFF] transition-all uppercase">Community</button>
           </div>
 
-          {/* Action Buttons & Mobile Toggle */}
-          <div className="flex items-center gap-2 md:gap-4">
-            <button className="hidden sm:block text-[11px] font-bold tracking-widest hover:text-[#6C2BFF] transition-all px-4 py-2 uppercase">Login</button>
+          <div className="flex gap-5">
+            <button className="hidden sm:block text-[11px] font-black tracking-widest hover:text-[#6C2BFF] transition-all px-4 py-2 uppercase">Login</button>
             <button 
               onClick={() => window.location.href='/plans'}
-              className="bg-white text-black px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[10px] md:text-[11px] font-black tracking-widest hover:bg-[#6C2BFF] hover:text-white transition-all active:scale-95 shadow-xl uppercase"
+              className="bg-[#6C2BFF] text-white px-8 py-3 rounded-2xl text-[11px] font-black tracking-widest hover:bg-[#7d42ff] transition-all active:scale-95 shadow-[0_10px_30px_rgba(108,43,255,0.3)] uppercase"
             >
-              Join
-            </button>
-            
-            {/* Mobile Menu Trigger */}
-            <button 
-              className="md:hidden p-2 text-gray-400 hover:text-white"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <XIcon /> : <MenuIcon />}
+              Enter Arena
             </button>
           </div>
-
-          {/* Mobile Overlay Menu */}
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="absolute top-full left-0 right-0 mt-2 p-6 bg-[#1A1D26] border border-white/10 rounded-2xl shadow-3xl flex flex-col gap-6 md:hidden"
-              >
-                <button onClick={() => window.location.href='/plans'} className="text-left font-black tracking-widest uppercase text-sm border-b border-white/5 pb-2">Plans</button>
-                <button onClick={() => window.location.href='/about-us'} className="text-left font-black tracking-widest uppercase text-sm border-b border-white/5 pb-2">About us</button>
-                <button className="text-left font-black tracking-widest uppercase text-sm text-[#6C2BFF]">Login</button>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </nav>
       </header>
 
       {/* Hero Section */}
-      <main className="relative pt-40 md:pt-52 pb-20 px-6 flex flex-col items-center">
+      <main className="relative pt-64 pb-24 px-6 flex flex-col items-center text-center">
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="text-center max-w-5xl"
+          className="max-w-6xl"
         >
-          <div className="inline-block px-4 md:px-5 py-2 rounded-full border border-[#6C2BFF]/30 bg-[#6C2BFF]/5 text-[#6C2BFF] text-[8px] md:text-[10px] font-black tracking-[0.4em] mb-8 md:mb-12 uppercase">
-            The Attention Economy is Over
+          <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-[#00D1B2]/30 bg-[#00D1B2]/5 text-[#00D1B2] text-[10px] font-black tracking-[0.4em] mb-12 uppercase">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00D1B2] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00D1B2]"></span>
+            </span>
+            Season 1 is Live
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-[110px] lg:text-[130px] font-black mb-8 tracking-tighter leading-[1] md:leading-[0.8] uppercase">
-            SKILL. <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6C2BFF] via-[#a47dff] to-[#00D1B2] animate-gradient block sm:inline">
-              NOT ALGORITHM.
+          <h1 className="text-6xl md:text-[140px] font-black mb-10 tracking-tighter leading-[0.85] uppercase italic">
+            TRUE TALENT <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6C2BFF] via-[#a47dff] to-[#00D1B2] animate-gradient">
+              NO MERCY.
             </span>
           </h1>
 
-          <p className="max-w-2xl mx-auto text-gray-400 text-base md:text-2xl mb-12 md:text-16 leading-relaxed font-light px-4">
-            ClipArena is the digital coliseum where the community decides. No bots, no clickbait, just pure <span className="text-white font-bold tracking-tight underline decoration-[#6C2BFF] decoration-2 underline-offset-4">Value Competition</span>.
+          <p className="max-w-3xl mx-auto text-gray-400 text-xl md:text-3xl mb-20 leading-relaxed font-light">
+            Forget the infinite scroll of mediocrity. ClipArena is where the <span className="text-white font-bold">top 1% of creators</span> battle for dominance, judged solely by a verified human community.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
             <motion.button 
               onClick={() => window.location.href='/plans'}
-              whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(108,43,255,0.5)" }}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 60px rgba(108,43,255,0.6)" }}
               whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-10 md:px-14 py-5 md:py-7 bg-[#6C2BFF] text-white text-lg md:text-xl font-black rounded-2xl transition-all shadow-lg uppercase"
+              className="px-16 py-8 bg-white text-black text-2xl font-black rounded-[2rem] transition-all shadow-2xl uppercase italic"
             >
-              Get Started
+              Join the Battle
             </motion.button>
-            <button className="group flex items-center gap-4 text-[10px] md:text-xs font-black tracking-[0.2em] hover:text-[#00D1B2] transition-all py-4 px-6 uppercase">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#00D1B2] transition-colors">
+            <button className="group flex items-center gap-5 text-[11px] font-black tracking-[0.3em] hover:text-[#00D1B2] transition-all py-4 px-8 uppercase">
+              <div className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-[#00D1B2]/10 group-hover:border-[#00D1B2] transition-all duration-300">
                 <PlayIcon />
               </div>
-              Watch Manifesto
+              The Manifesto
             </button>
           </div>
         </motion.div>
 
-        {/* Feature Cards */}
-        <section className="mt-32 md:mt-48 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-          <FeatureCard 
-            icon={<ZapIcon />} 
-            title="HUMAN VOTE" 
-            text="You get 3 votes per week. Use them wisely. Every vote is a conscious decision for real value."
-            delay={0.1}
-          />
-          <FeatureCard 
-            icon={<TrophyIcon />} 
-            title="PRIZE POOL" 
-            text="45% of all subscription revenue goes directly to the weekly top creators. Zero ads."
-            delay={0.2}
-            highlight
-          />
-          <FeatureCard 
-            icon={<ShieldIcon />} 
-            title="VERIFIED CONTENT" 
-            text="YouTube API integration ensures content ownership. No stolen clips. Only original skill."
-            delay={0.3}
-          />
+        {/* Extended Description Section */}
+        <section className="mt-60 max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center text-left">
+          <div className="space-y-10">
+            <h2 className="text-5xl font-black tracking-tighter leading-tight uppercase italic">
+              A Platform Built for <br />
+              <span className="text-[#6C2BFF]">The Creator Class.</span>
+            </h2>
+            <div className="space-y-6 text-gray-400 text-lg leading-relaxed font-light">
+              <p>
+                In an era where AI-generated slop and 5-second attention span hooks dominate every feed, ClipArena stands as a sanctuary for those who still believe in the craft of editing, gaming, and visual storytelling.
+              </p>
+              <p>
+                We've replaced shadowy algorithms with a transparent, democratic voting system. On ClipArena, your reach isn't determined by a computer's guess, but by the raw impact your content has on real people.
+              </p>
+              <ul className="space-y-4 pt-6">
+                <li className="flex items-center gap-4 text-white font-bold uppercase tracking-widest text-xs">
+                  <div className="w-6 h-0.5 bg-[#00D1B2]" /> $1 Subscription Model
+                </li>
+                <li className="flex items-center gap-4 text-white font-bold uppercase tracking-widest text-xs">
+                  <div className="w-6 h-0.5 bg-[#00D1B2]" /> Zero Ad Interruptions
+                </li>
+                <li className="flex items-center gap-4 text-white font-bold uppercase tracking-widest text-xs">
+                  <div className="w-6 h-0.5 bg-[#00D1B2]" /> Direct Revenue Share
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#6C2BFF]/20 to-[#00D1B2]/20 blur-3xl group-hover:scale-110 transition-transform duration-700" />
+            <div className="relative aspect-video bg-[#1A1D26] border border-white/10 rounded-[40px] overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 flex items-center justify-center opacity-40">
+                 {/* Visual placeholder for app UI or video */}
+                 <div className="w-[80%] h-0.5 bg-white/10" />
+                 <div className="absolute w-0.5 h-[60%] bg-white/10" />
+                 <RocketIcon />
+              </div>
+              <div className="absolute bottom-8 left-8 right-8 p-6 bg-black/40 backdrop-blur-md rounded-2xl border border-white/5">
+                 <div className="text-[10px] font-black tracking-[0.3em] text-[#00D1B2] mb-1 uppercase">Live Contest</div>
+                 <div className="text-xl font-bold italic uppercase">Weekly Championship Pool</div>
+                 <div className="mt-4 flex justify-between items-center font-mono text-sm">
+                   <span className="text-white">$14,582.00</span>
+                   <span className="text-gray-500">22:15:08 REMAINING</span>
+                 </div>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Manifesto Text Section */}
-        <section className="mt-32 md:mt-48 py-20 md:py-32 w-full bg-[#1A1D26]/30 border-y border-white/5 relative overflow-hidden flex flex-col items-center px-6">
-          <div className="max-w-4xl mx-auto text-center relative z-10">
+        {/* Core Pillars Section */}
+        <section className="mt-60 w-full max-w-6xl">
+          <div className="mb-20">
+            <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase mb-6 italic">The Three Pillars of CA.</h2>
+            <div className="h-1.5 w-40 bg-[#6C2BFF] rounded-full shadow-[0_0_20px_rgba(108,43,255,0.6)]" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <FeatureCard 
+              icon={<ZapIcon />} 
+              title="SKILL-BASED ECONOMY" 
+              text="Your subscription fee doesn't go to billionaires. It enters the Prize Pool. The better your clips, the more you earn from the collective fund."
+              delay={0.2}
+            />
+            <FeatureCard 
+              icon={<TrophyIcon />} 
+              title="WEEKLY ARENA" 
+              text="Every 7 days, the leaderboard resets. The winners are celebrated, paid, and immortalized in the Arena Hall of Fame. No legacy bias."
+              delay={0.4}
+              highlight
+            />
+            <FeatureCard 
+              icon={<ShieldIcon />} 
+              title="BOT-PROOF VOTING" 
+              text="Our multi-layer verification and 'Limited Vote' system ensures that every point on the leaderboard was earned through genuine human engagement."
+              delay={0.6}
+            />
+          </div>
+        </section>
+
+        {/* Manifesto Section */}
+        <section className="mt-60 py-40 w-full bg-[#1A1D26]/40 border-y border-white/5 relative overflow-hidden flex flex-col items-center">
+          <div className="absolute inset-0 opacity-10 flex items-center justify-center pointer-events-none">
+             <span className="text-[300px] font-black tracking-tighter uppercase italic select-none">VALUE</span>
+          </div>
+          <div className="max-w-4xl mx-auto text-center relative z-10 px-6">
             <motion.div 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              className="text-[#6C2BFF] text-3xl sm:text-4xl md:text-7xl font-black mb-8 md:mb-12 italic tracking-tighter leading-tight uppercase"
+              className="text-[#6C2BFF] text-5xl md:text-8xl font-black mb-16 italic tracking-tighter leading-[0.85] uppercase"
             >
               <div>THE ALGORITHM IS DEAD.</div>
-              <div className="md:mt-2">LONG LIVE THE CREATOR.</div>
+              <div className="text-white">LONG LIVE THE CREATOR.</div>
             </motion.div>
-            <div className="h-1 w-24 bg-[#00D1B2] mx-auto mb-8 md:mb-12 rounded-full shadow-[0_0_20px_#00D1B2]" />
-            <p className="text-gray-300 text-lg md:text-3xl leading-relaxed font-light">
-              Current platforms reward retention tricks. We reward <span className="text-white font-bold italic">real creativity</span>. 
-              A fair ecosystem where attention does not equal value. Value equals reward.
+            <p className="text-gray-300 text-xl md:text-3xl leading-relaxed font-light mb-12">
+              Current platforms reward retention tricks and clickbait hooks. We reward <span className="text-white font-bold italic uppercase tracking-tighter underline decoration-[#6C2BFF] decoration-4 underline-offset-8">Real Creativity</span>. 
+            </p>
+            <p className="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto font-light">
+              We believe attention is a currency. On ClipArena, you are no longer the product being sold to advertisers. You are the judge, the audience, and the owner of the platform.
             </p>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="mt-32 md:mt-52 pb-16 text-center px-6">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-white/10">
-            <div className="w-2 h-2 bg-[#6C2BFF] rounded-full animate-ping" />
+        <footer className="mt-60 pb-32 text-center w-full max-w-6xl mx-auto border-t border-white/5 pt-32">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-20 text-left mb-32 px-10">
+            <div className="space-y-6">
+               <div className="flex items-center gap-3">
+                  <img src="https://via.placeholder.com/50" alt="CA" className="w-8 h-8 rounded-lg" />
+                  <span className="font-black italic text-xl uppercase tracking-tighter">CLIPARENA</span>
+               </div>
+               <p className="text-gray-500 text-sm font-light leading-relaxed">
+                  Building the first decentralized meritocracy for short-form video content. Made for the creators, by the creators.
+               </p>
+            </div>
+            <div className="space-y-6">
+               <h4 className="text-[10px] font-black tracking-[0.4em] text-white uppercase">Navigation</h4>
+               <ul className="space-y-4 text-gray-500 text-sm font-medium">
+                  <li className="hover:text-white transition-colors cursor-pointer" onClick={() => window.location.href='/plans'}>Plans</li>
+                  <li className="hover:text-white transition-colors cursor-pointer" onClick={() => window.location.href='/about-us'}>About us</li>
+                  <li className="hover:text-white transition-colors cursor-pointer">Terms of Service</li>
+                  <li className="hover:text-white transition-colors cursor-pointer">Privacy</li>
+               </ul>
+            </div>
+            <div className="space-y-6">
+               <h4 className="text-[10px] font-black tracking-[0.4em] text-white uppercase">Newsletter</h4>
+               <div className="flex bg-white/5 border border-white/10 rounded-xl p-1 overflow-hidden">
+                  <input type="text" placeholder="Email address" className="bg-transparent border-none outline-none px-4 py-2 flex-grow text-sm font-light" />
+                  <button className="bg-[#6C2BFF] px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-[#7d42ff] transition-all">Join</button>
+               </div>
+            </div>
           </div>
-          <p className="text-gray-600 font-mono text-[8px] md:text-[10px] tracking-[0.4em] uppercase">
-            CLIPARENA // NO ALGORITHMS // 2026
+          <div className="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-12 border border-white/10 group hover:border-[#6C2BFF]/40 transition-all cursor-pointer">
+            <div className="w-2 h-2 bg-[#6C2BFF] rounded-full group-hover:scale-[3] transition-transform duration-500" />
+          </div>
+          <p className="text-gray-600 font-mono text-[10px] tracking-[0.6em] uppercase">
+            CLIPARENA // NO ALGORITHMS BEYOND THIS POINT // EST. 2026
           </p>
         </footer>
       </main>
@@ -205,6 +281,10 @@ export default function App() {
           background-size: 200% 200%;
           animation: gradient 8s ease infinite;
         }
+        ::selection {
+          background: #6C2BFF;
+          color: white;
+        }
       `}</style>
     </div>
   );
@@ -213,27 +293,34 @@ export default function App() {
 function FeatureCard({ icon, title, text, delay, highlight = false }: any) {
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.6 }}
       viewport={{ once: true }}
-      className={`relative p-8 md:p-12 rounded-[32px] md:rounded-[40px] border transition-all duration-500 group ${
+      whileHover={{ y: -12, scale: 1.02 }}
+      className={`relative p-12 rounded-[48px] border transition-all duration-500 group text-left ${
         highlight 
-        ? 'bg-[#6C2BFF] border-transparent shadow-[0_20px_50px_rgba(108,43,255,0.3)]' 
-        : 'bg-[#1A1D26] border-white/5'
+        ? 'bg-[#6C2BFF] border-transparent shadow-[0_40px_80px_rgba(108,43,255,0.4)]' 
+        : 'bg-[#1A1D26] border-white/5 hover:border-[#6C2BFF]/40'
       }`}
     >
-      <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-8 transition-transform group-hover:rotate-6 ${
+      <div className={`w-16 h-16 rounded-[20px] flex items-center justify-center mb-10 transition-transform group-hover:rotate-12 ${
         highlight ? 'bg-white text-[#6C2BFF]' : 'bg-[#6C2BFF]/10 text-[#6C2BFF]'
       }`}>
         {icon}
       </div>
-      <h3 className={`text-xl md:text-2xl font-black tracking-widest mb-4 md:mb-6 uppercase ${highlight ? 'text-white' : 'text-gray-100'}`}>
+      <h3 className={`text-2xl font-black tracking-widest mb-6 uppercase italic ${highlight ? 'text-white' : 'text-gray-100'}`}>
         {title}
       </h3>
-      <p className={`text-sm md:text-base leading-relaxed ${highlight ? 'text-white/80' : 'text-gray-400'}`}>
+      <p className={`text-lg leading-relaxed font-light ${highlight ? 'text-white/80' : 'text-gray-400'}`}>
         {text}
       </p>
+      
+      {!highlight && (
+        <div className="absolute top-12 right-12 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="w-2 h-2 bg-[#6C2BFF] rounded-full shadow-[0_0_15px_#6C2BFF]" />
+        </div>
+      )}
     </motion.div>
   );
 }
