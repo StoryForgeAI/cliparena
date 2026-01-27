@@ -48,7 +48,7 @@ export default function App() {
             {/* LOGO IMAGE REPLACEMENT AREA */}
             <div className="relative w-12 h-12 flex-shrink-0">
                <img 
-                 src="https://ibb.co/ynLqwzW0" 
+                 src="https://i.ibb.co/1fHTDC8Z/image-1-1769523538678.png" 
                  alt="ClipArena Logo" 
                  className="w-full h-full object-cover rounded-xl shadow-[0_0_15px_rgba(108,43,255,0.4)] border border-[#6C2BFF]/20"
                  onError={(e) => {
