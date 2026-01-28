@@ -8,6 +8,8 @@ interface NavButtonProps {
   label: string;
   active: boolean;
   onClick: () => void;
+  icon: React.ReactNode;
+  collapsed: boolean;
 }
 
 interface MobileNavButtonProps {
@@ -44,11 +46,11 @@ const AffiliateIcon = () => (
 );
 
 const InfoIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="12" x2="12.01" y2="12"></line></svg>
 );
 
 const PlusIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
 );
 
 const ZapIcon = () => (
@@ -63,9 +65,14 @@ const ShieldIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
 );
 
+const MenuIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+);
+
 export default function App() {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -88,7 +95,7 @@ export default function App() {
                PRO DASHBOARD ACCESS
             </div>
 
-            <h1 className="text-5xl md:text-[120px] font-black mb-10 tracking-tighter leading-[0.85] uppercase italic">
+            <h1 className="text-5xl md:text-[100px] lg:text-[120px] font-black mb-10 tracking-tighter leading-[0.85] uppercase italic">
               YOUR STAGE.<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6C2BFF] via-[#a47dff] to-[#00D1B2] animate-gradient">
                 YOUR RULES.
@@ -196,7 +203,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] selection:text-white overflow-x-hidden font-sans pb-32 md:pb-0">
+    <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] selection:text-white font-sans overflow-x-hidden">
       
       {/* Background Ambience */}
       <div className="fixed inset-0 overflow-hidden -z-10">
@@ -204,50 +211,100 @@ export default function App() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00D1B2]/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Optimized Desktop Header - Symmetrical Layout */}
-      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl hidden md:block">
-        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] px-10 py-4 flex justify-between items-center shadow-2xl relative overflow-visible">
-          
-          {/* Left Side: 2 Items */}
-          <div className="flex items-center gap-14 flex-1">
-            <NavButton label="HOME" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-            <NavButton label="CREDITS" active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} />
-          </div>
+      {/* Desktop Left Sidebar */}
+      <motion.aside 
+        initial={false}
+        animate={{ width: isSidebarOpen ? 280 : 88 }}
+        className="fixed top-0 left-0 bottom-0 bg-[#1A1D26]/80 backdrop-blur-xl border-r border-white/5 z-50 hidden md:flex flex-col shadow-2xl transition-all duration-300"
+      >
+        <div className="p-6 flex items-center justify-between">
+          <AnimatePresence mode="wait">
+            {isSidebarOpen && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="text-xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-white/50"
+              >
+                CLIPARENA
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-400 hover:text-white"
+          >
+            <MenuIcon />
+          </button>
+        </div>
 
-          {/* Center: Create Page Trigger */}
-          <div className="flex justify-center items-center px-4 relative z-50">
-            <motion.button 
-              onClick={() => setActiveTab('create')}
-              whileHover={{ scale: 1.1, boxShadow: "0 0 40px rgba(108,43,255,0.6)" }}
-              whileTap={{ scale: 0.9 }}
-              className={`bg-[#6C2BFF] w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-lg border border-white/20 transition-all ${activeTab === 'create' ? 'ring-4 ring-[#6C2BFF]/40 scale-105' : ''}`}
-            >
-              <PlusIcon />
-            </motion.button>
-          </div>
+        <nav className="flex-1 px-4 py-8 space-y-2">
+          <SidebarNavButton 
+            label="HOME" 
+            icon={<HomeIcon />}
+            active={activeTab === 'home'} 
+            onClick={() => setActiveTab('home')} 
+            collapsed={!isSidebarOpen}
+          />
+          <SidebarNavButton 
+            label="CREDITS" 
+            icon={<CreditsIcon />}
+            active={activeTab === 'credits'} 
+            onClick={() => setActiveTab('credits')} 
+            collapsed={!isSidebarOpen}
+          />
+          <SidebarNavButton 
+            label="CREATE" 
+            icon={<PlusIcon />}
+            active={activeTab === 'create'} 
+            onClick={() => setActiveTab('create')} 
+            collapsed={!isSidebarOpen}
+            isSpecial
+          />
+          <SidebarNavButton 
+            label="AFFILIATE" 
+            icon={<AffiliateIcon />}
+            active={activeTab === 'affiliate'} 
+            onClick={() => setActiveTab('affiliate')} 
+            collapsed={!isSidebarOpen}
+          />
+          <SidebarNavButton 
+            label="ABOUT" 
+            icon={<InfoIcon />}
+            active={activeTab === 'about'} 
+            onClick={() => setActiveTab('about')} 
+            collapsed={!isSidebarOpen}
+          />
+        </nav>
 
-          {/* Right Side: 2 Items + Profile */}
-          <div className="flex items-center gap-14 flex-1 justify-end">
-            <NavButton label="AFFILIATE" active={activeTab === 'affiliate'} onClick={() => setActiveTab('affiliate')} />
-            <NavButton label="ABOUT" active={activeTab === 'about'} onClick={() => setActiveTab('about')} />
-            
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#6C2BFF] to-[#00D1B2] p-[2px] cursor-pointer hover:rotate-12 transition-all">
-              <div className="w-full h-full rounded-full bg-[#1A1D26] flex items-center justify-center overflow-hidden">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User profile" />
+        <div className="p-6 border-t border-white/5">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#6C2BFF] to-[#00D1B2] p-[2px]">
+              <div className="w-full h-full rounded-full bg-[#1A1D26] overflow-hidden">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" />
               </div>
             </div>
+            {isSidebarOpen && (
+              <div className="flex-1 overflow-hidden">
+                <p className="text-xs font-black truncate">FELIX THE DEV</p>
+                <p className="text-[10px] text-gray-500 truncate">PRO MEMBER</p>
+              </div>
+            )}
           </div>
-        </nav>
-      </header>
+        </div>
+      </motion.aside>
 
       {/* Main Content Area */}
-      <main className="relative pt-32 md:pt-60 pb-24 px-6 flex flex-col items-center text-center max-w-7xl mx-auto min-h-screen">
+      <motion.main 
+        animate={{ paddingLeft: typeof window !== 'undefined' && window.innerWidth > 768 ? (isSidebarOpen ? 280 : 88) : 0 }}
+        className="relative pt-24 md:pt-32 pb-32 px-6 flex flex-col items-center text-center w-full min-h-screen transition-all duration-300"
+      >
         <AnimatePresence mode="wait">
           {renderContent()}
         </AnimatePresence>
-      </main>
+      </motion.main>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation (Kept as requested) */}
       <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] z-50">
         <nav className="bg-[#1A1D26]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] px-6 py-3 flex justify-between items-center shadow-2xl relative">
           <MobileNavButton icon={<HomeIcon />} label="Home" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
@@ -285,17 +342,35 @@ export default function App() {
 
 // --- SUBCOMPONENTS ---
 
-function NavButton({ label, active, onClick }: NavButtonProps) {
+function SidebarNavButton({ label, icon, active, onClick, collapsed, isSpecial = false }: NavButtonProps & { isSpecial?: boolean }) {
   return (
     <button 
       onClick={onClick}
-      className={`relative py-2 transition-all hover:text-white uppercase font-black text-[10px] tracking-[0.2em] whitespace-nowrap ${active ? 'text-white' : 'text-gray-500'}`}
+      className={`
+        w-full flex items-center gap-4 p-4 rounded-2xl transition-all group relative
+        ${active 
+          ? (isSpecial ? 'bg-[#6C2BFF] text-white shadow-[0_0_20px_rgba(108,43,255,0.3)]' : 'bg-white/5 text-white') 
+          : 'text-gray-500 hover:text-white hover:bg-white/5'}
+      `}
     >
-      {label}
-      {active && (
+      <div className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
+        {icon}
+      </div>
+      
+      {!collapsed && (
+        <motion.span 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="text-[11px] font-black tracking-widest uppercase"
+        >
+          {label}
+        </motion.span>
+      )}
+
+      {active && !isSpecial && (
         <motion.div 
-          layoutId="activeNav"
-          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#6C2BFF] rounded-full"
+          layoutId="sidebarActive"
+          className="absolute left-0 w-1 h-6 bg-[#6C2BFF] rounded-r-full"
         />
       )}
     </button>
