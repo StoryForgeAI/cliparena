@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -41,7 +43,7 @@ export default function App() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] selection:text-white overflow-x-hidden font-sans pb-24 md:pb-0">
+    <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] selection:text-white overflow-x-hidden font-sans pb-32 md:pb-0">
       
       {/* Background Ambience */}
       <div className="fixed inset-0 overflow-hidden -z-10">
@@ -51,7 +53,7 @@ export default function App() {
 
       {/* Desktop Header */}
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl hidden md:block">
-        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] px-8 py-4 flex justify-between items-center shadow-2xl">
+        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] px-8 py-4 flex justify-between items-center shadow-2xl relative">
           <div className="flex items-center gap-12 text-[11px] font-black tracking-[0.3em] text-gray-400">
             <NavButton label="HOME" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
             <NavButton label="CREDITS" active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} />
@@ -61,7 +63,7 @@ export default function App() {
           <motion.button 
             whileHover={{ scale: 1.1, boxShadow: "0 0 30px rgba(108,43,255,0.5)" }}
             whileTap={{ scale: 0.9 }}
-            className="absolute left-1/2 -translate-x-1/2 bg-[#6C2BFF] w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg border border-white/20"
+            className="absolute left-1/2 -translate-x-1/2 bg-[#6C2BFF] w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg border border-white/20 z-10"
           >
             <PlusIcon />
           </motion.button>
@@ -132,26 +134,26 @@ export default function App() {
 
       {/* Mobile Bottom Navigation */}
       <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-50">
-        <nav className="bg-[#1A1D26]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] px-4 py-3 flex justify-between items-center shadow-2xl">
+        <nav className="bg-[#1A1D26]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] px-4 py-3 flex justify-between items-center shadow-2xl relative">
           <MobileNavButton icon={<HomeIcon />} label="Home" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
           <MobileNavButton icon={<CreditsIcon />} label="Credits" active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} />
           
-          {/* Mobile Center Create Button */}
-          <div className="relative -top-8">
+          {/* Mobile Center Create Button Container to prevent overlap issues */}
+          <div className="relative w-16 h-12 flex justify-center">
              <motion.button 
                 whileTap={{ scale: 0.9 }}
-                className="bg-[#6C2BFF] w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-[0_10px_30px_rgba(108,43,255,0.4)] border-4 border-[#0F1117]"
+                className="absolute -top-10 bg-[#6C2BFF] w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-[0_10px_30px_rgba(108,43,255,0.4)] border-4 border-[#0F1117] z-50"
              >
                <PlusIcon />
              </motion.button>
           </div>
 
           <MobileNavButton icon={<AffiliateIcon />} label="Affiliate" active={activeTab === 'affiliate'} onClick={() => setActiveTab('affiliate')} />
-          <div className="flex flex-col items-center justify-center w-12 gap-1">
-             <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20">
+          <div className="flex flex-col items-center justify-center w-12 gap-1 opacity-60">
+             <div className="w-7 h-7 rounded-full overflow-hidden border border-white/20">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" />
              </div>
-             <span className="text-[8px] font-black text-gray-500 uppercase">Profile</span>
+             <span className="text-[8px] font-black text-white uppercase">Profile</span>
           </div>
         </nav>
       </div>
@@ -196,7 +198,9 @@ function MobileNavButton({ icon, label, active, onClick }) {
       onClick={onClick}
       className={`flex flex-col items-center justify-center w-12 gap-1 transition-all ${active ? 'text-[#6C2BFF]' : 'text-gray-500'}`}
     >
-      {icon}
+      <div className={active ? 'scale-110 transition-transform' : ''}>
+        {icon}
+      </div>
       <span className="text-[8px] font-black uppercase tracking-wider">{label}</span>
     </button>
   );
@@ -206,7 +210,7 @@ function QuickActionButton({ icon, label, color }) {
   return (
     <motion.button
       whileHover={{ y: -5, backgroundColor: `${color}20` }}
-      className="flex items-center gap-4 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl transition-all"
+      className="flex items-center gap-4 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl transition-all w-full sm:w-auto"
     >
       <span style={{ color }}>{icon}</span>
       <span className="text-[11px] font-black tracking-widest uppercase">{label}</span>
@@ -230,6 +234,8 @@ function DashboardCard({ title, value, desc, icon }) {
         <motion.div 
           initial={{ width: 0 }}
           whileInView={{ width: '70%' }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
           className="h-full bg-[#6C2BFF]" 
         />
       </div>
