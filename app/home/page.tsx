@@ -105,7 +105,7 @@ export default function App() {
               <QuickActionButton icon={<ShieldIcon />} label="SECURITY" color="#444" />
             </div>
 
-            <section className="mt-32 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8">
+            <section className="mt-32 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
               <DashboardCard 
                 title="EARNINGS" 
                 value="$1,240.50" 
@@ -134,11 +134,30 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center min-h-[40vh]"
+              className="flex flex-col items-center justify-center min-h-[50vh]"
             >
               <h2 className="text-6xl font-black italic tracking-tighter mb-4 uppercase">CREDITS</h2>
               <div className="h-1 w-24 bg-[#6C2BFF] mb-8"></div>
-              <p className="text-gray-400 text-xl font-light">Credit management system coming soon.</p>
+              <p className="text-gray-400 text-xl font-light tracking-widest uppercase">Management system coming soon.</p>
+            </motion.div>
+        );
+      case 'create':
+        return (
+            <motion.div 
+              key="create"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="flex flex-col items-center justify-center min-h-[50vh]"
+            >
+              <div className="w-24 h-24 bg-[#6C2BFF]/20 rounded-3xl flex items-center justify-center text-[#6C2BFF] mb-8 border border-[#6C2BFF]/30">
+                <PlusIcon />
+              </div>
+              <h2 className="text-6xl font-black italic tracking-tighter mb-4 uppercase">CREATE</h2>
+              <div className="h-1 w-24 bg-[#6C2BFF] mb-8"></div>
+              <p className="text-gray-400 text-xl font-light tracking-widest uppercase text-center max-w-md px-6">
+                Arena submission studio is currently under maintenance. Stay tuned!
+              </p>
             </motion.div>
         );
       case 'affiliate':
@@ -148,11 +167,11 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-[40vh]"
+            className="flex flex-col items-center justify-center min-h-[50vh]"
           >
             <h2 className="text-6xl font-black italic tracking-tighter mb-4 uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#00D1B2] to-[#6C2BFF]">AFFILIATE</h2>
             <div className="h-1 w-24 bg-[#00D1B2] mb-8"></div>
-            <p className="text-gray-400 text-xl font-light tracking-widest">PARTNERSHIP PROGRAM COMING SOON</p>
+            <p className="text-gray-400 text-xl font-light tracking-widest uppercase">Partnership program coming soon</p>
           </motion.div>
         );
       case 'about':
@@ -162,7 +181,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-[40vh] max-w-3xl mx-auto"
+            className="flex flex-col items-center justify-center min-h-[50vh] max-w-3xl mx-auto px-6"
           >
             <h2 className="text-6xl font-black italic tracking-tighter mb-4 uppercase">ABOUT US</h2>
             <div className="h-1 w-24 bg-white/20 mb-8"></div>
@@ -185,27 +204,34 @@ export default function App() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00D1B2]/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Desktop Header */}
-      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl hidden md:block">
-        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] px-8 py-4 flex justify-between items-center shadow-2xl relative">
-          <div className="flex items-center gap-10 text-[10px] font-black tracking-[0.25em] text-gray-400">
+      {/* Optimized Desktop Header - Symmetrical Layout */}
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl hidden md:block">
+        <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] px-10 py-4 flex justify-between items-center shadow-2xl relative overflow-visible">
+          
+          {/* Left Side: 2 Items */}
+          <div className="flex items-center gap-14 flex-1">
             <NavButton label="HOME" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
             <NavButton label="CREDITS" active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} />
-            <NavButton label="AFFILIATE" active={activeTab === 'affiliate'} onClick={() => setActiveTab('affiliate')} />
           </div>
 
-          {/* Large Center Create Button */}
-          <motion.button 
-            whileHover={{ scale: 1.1, boxShadow: "0 0 30px rgba(108,43,255,0.5)" }}
-            whileTap={{ scale: 0.9 }}
-            className="absolute left-1/2 -translate-x-1/2 bg-[#6C2BFF] w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg border border-white/20 z-10"
-          >
-            <PlusIcon />
-          </motion.button>
+          {/* Center: Create Page Trigger */}
+          <div className="flex justify-center items-center px-4 relative z-50">
+            <motion.button 
+              onClick={() => setActiveTab('create')}
+              whileHover={{ scale: 1.1, boxShadow: "0 0 40px rgba(108,43,255,0.6)" }}
+              whileTap={{ scale: 0.9 }}
+              className={`bg-[#6C2BFF] w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-lg border border-white/20 transition-all ${activeTab === 'create' ? 'ring-4 ring-[#6C2BFF]/40 scale-105' : ''}`}
+            >
+              <PlusIcon />
+            </motion.button>
+          </div>
 
-          <div className="flex items-center gap-10 text-[10px] font-black tracking-[0.25em] text-gray-400">
-            <NavButton label="ABOUT US" active={activeTab === 'about'} onClick={() => setActiveTab('about')} />
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#6C2BFF] to-[#00D1B2] p-[2px] ml-4 cursor-pointer hover:scale-110 transition-transform">
+          {/* Right Side: 2 Items + Profile */}
+          <div className="flex items-center gap-14 flex-1 justify-end">
+            <NavButton label="AFFILIATE" active={activeTab === 'affiliate'} onClick={() => setActiveTab('affiliate')} />
+            <NavButton label="ABOUT" active={activeTab === 'about'} onClick={() => setActiveTab('about')} />
+            
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#6C2BFF] to-[#00D1B2] p-[2px] cursor-pointer hover:rotate-12 transition-all">
               <div className="w-full h-full rounded-full bg-[#1A1D26] flex items-center justify-center overflow-hidden">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User profile" />
               </div>
@@ -215,7 +241,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="relative pt-32 md:pt-64 pb-24 px-6 flex flex-col items-center text-center max-w-7xl mx-auto">
+      <main className="relative pt-32 md:pt-60 pb-24 px-6 flex flex-col items-center text-center max-w-7xl mx-auto min-h-screen">
         <AnimatePresence mode="wait">
           {renderContent()}
         </AnimatePresence>
@@ -229,8 +255,9 @@ export default function App() {
           
           <div className="relative w-12 h-12 flex justify-center">
              <motion.button 
+                onClick={() => setActiveTab('create')}
                 whileTap={{ scale: 0.9 }}
-                className="absolute -top-10 bg-[#6C2BFF] w-14 h-14 rounded-[1.5rem] flex items-center justify-center shadow-[0_10px_30px_rgba(108,43,255,0.4)] border-4 border-[#0F1117] z-50"
+                className={`absolute -top-10 w-14 h-14 rounded-[1.5rem] flex items-center justify-center shadow-[0_10px_30px_rgba(108,43,255,0.4)] border-4 border-[#0F1117] z-50 transition-all ${activeTab === 'create' ? 'bg-[#00D1B2]' : 'bg-[#6C2BFF]'}`}
              >
                <PlusIcon />
              </motion.button>
@@ -256,19 +283,19 @@ export default function App() {
   );
 }
 
-// --- SUBCOMPONENTS WITH TYPES ---
+// --- SUBCOMPONENTS ---
 
 function NavButton({ label, active, onClick }: NavButtonProps) {
   return (
     <button 
       onClick={onClick}
-      className={`relative py-2 transition-all hover:text-white uppercase font-black ${active ? 'text-white' : 'text-gray-500'}`}
+      className={`relative py-2 transition-all hover:text-white uppercase font-black text-[10px] tracking-[0.2em] whitespace-nowrap ${active ? 'text-white' : 'text-gray-500'}`}
     >
       {label}
       {active && (
         <motion.div 
           layoutId="activeNav"
-          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#6C2BFF]"
+          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#6C2BFF] rounded-full"
         />
       )}
     </button>
