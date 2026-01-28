@@ -226,7 +226,7 @@ export default function App() {
                 exit={{ opacity: 0, x: -10 }}
                 className="text-xl font-black italic tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-white/50"
               >
-                CLIPARENA
+                CLIPARENAa
               </motion.div>
             )}
           </AnimatePresence>
