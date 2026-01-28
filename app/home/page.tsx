@@ -1,7 +1,34 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+
+// --- TYPES & INTERFACES ---
+interface NavButtonProps {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}
+
+interface MobileNavButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}
+
+interface QuickActionButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  color: string;
+}
+
+interface DashboardCardProps {
+  title: string;
+  value: string;
+  desc: string;
+  icon: React.ReactNode;
+}
 
 // --- CUSTOM SVG ICONS ---
 const HomeIcon = () => (
@@ -45,13 +72,13 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] selection:text-white overflow-x-hidden font-sans pb-32 md:pb-0">
       
-      {/* Background Ambience */}
+      {/* Háttér hangulat elemek */}
       <div className="fixed inset-0 overflow-hidden -z-10">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6C2BFF]/10 blur-[150px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00D1B2]/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Desktop Header */}
+      {/* Desktop fejléc */}
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl hidden md:block">
         <nav className="bg-[#1A1D26]/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] px-8 py-4 flex justify-between items-center shadow-2xl relative">
           <div className="flex items-center gap-12 text-[11px] font-black tracking-[0.3em] text-gray-400">
@@ -59,7 +86,7 @@ export default function App() {
             <NavButton label="CREDITS" active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} />
           </div>
 
-          {/* Large Center Create Button */}
+          {/* Központi Létrehozás gomb */}
           <motion.button 
             whileHover={{ scale: 1.1, boxShadow: "0 0 30px rgba(108,43,255,0.5)" }}
             whileTap={{ scale: 0.9 }}
@@ -72,14 +99,14 @@ export default function App() {
             <NavButton label="AFFILIATE" active={activeTab === 'affiliate'} onClick={() => setActiveTab('affiliate')} />
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#6C2BFF] to-[#00D1B2] p-[2px]">
               <div className="w-full h-full rounded-full bg-[#1A1D26] flex items-center justify-center overflow-hidden">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" />
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Felhasználó" />
               </div>
             </div>
           </div>
         </nav>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero szekció */}
       <main className="relative pt-32 md:pt-64 pb-24 px-6 flex flex-col items-center text-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -99,7 +126,7 @@ export default function App() {
           </h1>
 
           <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-2xl mb-16 leading-relaxed font-light">
-            Monitor your earnings, manage your credits, and <span className="text-white font-bold">create legendary content</span> that dominates the Arena.
+            Kövesd nyomon bevételeidet, kezeld kreditjeidet, és <span className="text-white font-bold">hozz létre legendás tartalmat</span>.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -109,36 +136,35 @@ export default function App() {
           </div>
         </motion.div>
 
-        {/* Feature Grid */}
+        {/* Adatkártyák rácsa */}
         <section className="mt-32 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8">
             <DashboardCard 
               title="EARNINGS" 
               value="$1,240.50" 
-              desc="This Season" 
+              desc="Ebben a szezonban" 
               icon={<TrophyIcon />}
             />
             <DashboardCard 
               title="CREDITS" 
               value="450" 
-              desc="Available for Votes" 
+              desc="Szavazásra vár" 
               icon={<ZapIcon />}
             />
             <DashboardCard 
               title="REACH" 
               value="2.4M" 
-              desc="Verified Humans" 
+              desc="Hitelesített megtekintés" 
               icon={<ShieldIcon />}
             />
         </section>
       </main>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobil alsó navigáció */}
       <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-50">
         <nav className="bg-[#1A1D26]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] px-4 py-3 flex justify-between items-center shadow-2xl relative">
           <MobileNavButton icon={<HomeIcon />} label="Home" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
           <MobileNavButton icon={<CreditsIcon />} label="Credits" active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} />
           
-          {/* Mobile Center Create Button Container to prevent overlap issues */}
           <div className="relative w-16 h-12 flex justify-center">
              <motion.button 
                 whileTap={{ scale: 0.9 }}
@@ -173,13 +199,13 @@ export default function App() {
   );
 }
 
-// --- SUBCOMPONENTS ---
+// --- SZUBKOMPONENSEK DEFINÍCIÓKKAL ---
 
-function NavButton({ label, active, onClick }) {
+function NavButton({ label, active, onClick }: NavButtonProps) {
   return (
     <button 
       onClick={onClick}
-      className={`relative py-2 transition-all hover:text-white uppercase ${active ? 'text-white' : 'text-gray-500'}`}
+      className={`relative py-2 transition-all hover:text-white uppercase font-black ${active ? 'text-white' : 'text-gray-500'}`}
     >
       {label}
       {active && (
@@ -192,7 +218,7 @@ function NavButton({ label, active, onClick }) {
   );
 }
 
-function MobileNavButton({ icon, label, active, onClick }) {
+function MobileNavButton({ icon, label, active, onClick }: MobileNavButtonProps) {
   return (
     <button 
       onClick={onClick}
@@ -206,7 +232,7 @@ function MobileNavButton({ icon, label, active, onClick }) {
   );
 }
 
-function QuickActionButton({ icon, label, color }) {
+function QuickActionButton({ icon, label, color }: QuickActionButtonProps) {
   return (
     <motion.button
       whileHover={{ y: -5, backgroundColor: `${color}20` }}
@@ -218,7 +244,7 @@ function QuickActionButton({ icon, label, color }) {
   );
 }
 
-function DashboardCard({ title, value, desc, icon }) {
+function DashboardCard({ title, value, desc, icon }: DashboardCardProps) {
   return (
     <motion.div 
       whileHover={{ y: -10 }}
