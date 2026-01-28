@@ -21,33 +21,25 @@ import {
 } from 'firebase/firestore';
 
 /*
-🔥 IMPORTANT – CUSTOM DOMAIN GOOGLE SIGN‑IN (NO MORE *.firebaseapp.com)
-You MUST set this in Firebase Console AND Vercel env vars:
+========================================================
+FIREBASE DOMAIN VERSION (NO CUSTOM DOMAIN REQUIRED)
+========================================================
+This version uses the DEFAULT firebase domain again:
+project-id.firebaseapp.com
 
-1. Firebase Console → Authentication → Settings → Authorized domains
-   ➜ Add: yourdomain.com
+If login was failing, it was because authDomain did not match
+Firebase authorized domain list.
 
-2. Firebase Console → Authentication → Sign-in method → Google → Enable
-
-3. Firebase Console → Project Settings → General
-   ➜ Add custom domain in "Authorized domains" if not already
-
-4. VERCEL ENV VARIABLES (VERY IMPORTANT)
-   NEXT_PUBLIC_FB_AUTH_DOMAIN=yourdomain.com
-   (NOT yourproject.firebaseapp.com)
-
-5. Google Cloud Console → APIs & Services → OAuth Consent Screen
-   ➜ App name = YOUR BRAND NAME (this is what users see)
-   ➜ Authorized domain = yourdomain.com
-
-THIS is what removes the ugly firebase domain from the popup.
+MAKE SURE THIS DOMAIN EXISTS IN:
+Firebase → Authentication → Settings → Authorized domains
+========================================================
 */
 
-// --- FIREBASE CONFIG ---
+// ✅ FIREBASE CONFIG
 const getFirebaseConfig = () => {
   const config = {
     apiKey: process.env.NEXT_PUBLIC_FB_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FB_AUTH_DOMAIN, // ← CUSTOM DOMAIN HERE
+    authDomain: process.env.NEXT_PUBLIC_FB_AUTH_DOMAIN, // must be project.firebaseapp.com
     projectId: process.env.NEXT_PUBLIC_FB_PROJECT_ID,
     storageBucket: process.env.NEXT_PUBLIC_FB_STORAGE_BUCKET,
     messagingSenderId: process.env.NEXT_PUBLIC_FB_MESSAGING_SENDER_ID,
@@ -78,7 +70,7 @@ export default function AuthPage() {
 
     const config = getFirebaseConfig();
     if (!config) {
-      setError('Firebase config missing. Check env vars.');
+      setError('Missing Firebase env variables');
       return;
     }
 
@@ -98,6 +90,7 @@ export default function AuthPage() {
     }
   }, []);
 
+  // ✅ CREATE USER DOC IF NOT EXISTS
   const ensureUserRecord = async (userObj: User | null, providedUsername = '') => {
     if (!userObj || !db) return;
 
@@ -117,6 +110,7 @@ export default function AuthPage() {
     }
   };
 
+  // ✅ EMAIL LOGIN / REGISTER
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) return;
@@ -138,6 +132,7 @@ export default function AuthPage() {
     }
   };
 
+  // ✅ GOOGLE LOGIN (DEFAULT FIREBASE POPUP)
   const handleGoogle = async () => {
     if (!auth) return;
 
@@ -154,7 +149,7 @@ export default function AuthPage() {
       setRedirecting(true);
       setTimeout(() => (window.location.href = '/'), 1500);
     } catch (err: any) {
-      if (err.code !== 'auth/popup-closed-by-user') setError('Google sign-in failed');
+      if (err.code !== 'auth/popup-closed-by-user') setError(err.message);
       setLoading(false);
     }
   };
@@ -204,34 +199,19 @@ export default function AuthPage() {
 }
 
 /*
-===================== STEP‑BY‑STEP TUTORIAL =====================
+================ LOGIN FIX CHECKLIST ================
 
-✅ STEP 1 — Add custom domain to Firebase
-Firebase Console → Authentication → Settings → Authorized domains
-ADD: yourdomain.com
+1. Vercel ENV MUST CONTAIN:
+NEXT_PUBLIC_FB_AUTH_DOMAIN=your-project-id.firebaseapp.com
 
-✅ STEP 2 — Change Auth Domain in Vercel
-Vercel → Project → Settings → Environment Variables
-SET:
-NEXT_PUBLIC_FB_AUTH_DOMAIN=yourdomain.com
+2. Firebase → Authentication → Settings → Authorized Domains
+Must include:
+- your-project-id.firebaseapp.com
+- localhost
 
-Redeploy project.
+3. Google Provider ENABLED in Firebase
 
-✅ STEP 3 — Google Branding (THIS CHANGES THE NAME USERS SEE)
-Google Cloud Console → APIs & Services → OAuth Consent Screen
-App Name = YOUR APP NAME
-Support Email = your email
-Authorized domains → add yourdomain.com
-Save & Publish
+4. After changing ENV → REDEPLOY Vercel
 
-✅ STEP 4 — Enable Google Provider
-Firebase → Authentication → Sign-in method → Google → Enable
-
-✅ RESULT
-Popup now shows:
-✔ Your App Name
-✔ Your domain
-❌ No more firebaseapp.com branding
-
-============================================================
+=====================================================
 */
