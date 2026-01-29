@@ -2,240 +2,190 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, onSnapshot, updateDoc, increment, query, getDocs } from 'firebase/firestore';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 
-// --- FIREBASE CONFIG (Environment provided) ---
-const firebaseConfig = JSON.parse(__firebase_config);
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'clip-arena-v1';
+// --- INITIAL DATA STORE ---
+// Itt tároljuk a videókat. Mivel nincs Firebase, ez a böngésző memóriájában él.
+const INITIAL_VIDEOS = [
+  { id: 1, ytId: "dQw4w9WgXcQ", title: "EPIC CLUTCH #1", creator: "Ninja", likes: 998, votes: 120, rank: 5 },
+  { id: 2, ytId: "jNQXAC9IVRw", title: "BEST MOMENTS", creator: "MrBeast", likes: 12500, votes: 450, rank: 8 },
+  { id: 3, ytId: "9bZkp7q19f0", title: "UNREAL SKILLS", creator: "ArenaPro", likes: 450, votes: 30, rank: 3 },
+  { id: 4, ytId: "C0DPdy98e4c", title: "TOP PLAYS", creator: "ClipKing", likes: 890, votes: 90, rank: 4 },
+  { id: 5, ytId: "L_jWHffIx5E", title: "INSANE LUCK", creator: "Ghost", likes: 2300, votes: 150, rank: 6 },
+];
 
-// --- TYPES & INTERFACES ---
-interface Video {
-  id: string;
-  youtubeId: string;
-  title: string;
-  creator: string;
-  votes: number;
-  rank: number; // Minél nagyobb, annál többször dobja be (súlyozott sorsolás)
-}
-
-interface SidebarNavButtonProps {
-  label: string;
-  icon: React.ReactNode;
-  active: boolean;
-  onClick: () => void;
-  collapsed: boolean;
-  isSpecial?: boolean;
-}
-
-// --- ICONS ---
-const HomeIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
-const VideoIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>;
-const CreditsIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="18" x2="12" y2="6"/></svg>;
-const PlusIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
-const MenuIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
-const HeartIcon = ({ filled }: { filled?: boolean }) => <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
+// Segédfüggvény a számok formázásához (pl. 1000 -> 1K)
+const formatNumber = (num: number) => {
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + "K";
+  }
+  return num.toString();
+};
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [user, setUser] = useState<any>(null);
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [view, setView] = useState<'home' | 'videos'>('home');
+  const [videoList, setVideoList] = useState(INITIAL_VIDEOS);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showHeart, setShowHeart] = useState(false);
 
-  // 1. Auth Init
-  useEffect(() => {
-    signInAnonymously(auth).catch(console.error);
-    return onAuthStateChanged(auth, setUser);
-  }, []);
+  // Súlyozott válogatás a Rank alapján (Minél nagyobb a rank, annál többször kerül előre)
+  const sortedVideos = useMemo(() => {
+    return [...videoList].sort((a, b) => b.rank - a.rank);
+  }, [videoList]);
 
-  // 2. Data Fetching (Public Video Collection)
-  useEffect(() => {
-    if (!user) return;
-    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'videos'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const videoData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Video));
-      // Súlyozott sorrend: a rang (rank) alapján pörgetjük ki őket később
-      setVideos(videoData);
-    }, (err) => console.error("Firestore error:", err));
-    return () => unsubscribe();
-  }, [user]);
+  const currentVideo = sortedVideos[currentIndex % sortedVideos.length];
 
-  // Súlyozott videóválasztás logika (Minél nagyobb a rank, annál több "jegye" van a sorsoláson)
-  const currentVideo = useMemo(() => {
-    if (videos.length === 0) return null;
-    return videos[currentVideoIndex % videos.length];
-  }, [videos, currentVideoIndex]);
+  const handleLike = () => {
+    setShowHeart(true);
+    setTimeout(() => setShowHeart(false), 800);
 
-  const handleVote = async (videoId: string) => {
-    if (!user) return;
-    const videoRef = doc(db, 'artifacts', appId, 'public', 'data', 'videos', videoId);
-    await updateDoc(videoRef, {
-      votes: increment(1),
-      rank: increment(0.1) // Lassú növekedés
-    });
-    // Következő videóra ugrás szavazás után
-    setCurrentVideoIndex(prev => prev + 1);
+    setVideoList(prev => prev.map(v => {
+      if (v.id === currentVideo.id) {
+        return { 
+          ...v, 
+          likes: v.likes + 1, 
+          rank: v.rank + 0.1 // A rank szép lassan nő minden lájk után
+        };
+      }
+      return v;
+    }));
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'home':
-        return (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
-            <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter mb-6 uppercase">CLIP ARENA</h1>
-            <p className="text-gray-400 text-xl max-w-xl mb-12">The ultimate content battlefield.</p>
+  const handleVote = () => {
+    setVideoList(prev => prev.map(v => {
+      if (v.id === currentVideo.id) {
+        return { 
+          ...v, 
+          votes: v.votes + 1,
+          rank: v.rank + 0.2 // A szavazat többet ér a ranknál
+        };
+      }
+      return v;
+    }));
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0F1117] text-white font-sans overflow-hidden">
+      <AnimatePresence mode="wait">
+        
+        {/* --- HOME KÓD --- */}
+        {view === 'home' && (
+          <motion.div 
+            key="home"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="h-screen flex flex-col items-center justify-center p-6 text-center"
+          >
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6C2BFF]/10 blur-[150px] rounded-full" />
+            
+            <h1 className="text-7xl md:text-9xl font-black italic tracking-tighter mb-8 leading-none">
+              CLIP<br /><span className="text-[#6C2BFF]">ARENA</span>
+            </h1>
+            
+            <p className="text-gray-400 text-xl max-w-lg mb-12 font-light">
+              Nézd a legmenőbb klipeket, szavazz a kedvenceidre és pörgesd fel a rangsorukat!
+            </p>
+
             <button 
-                onClick={() => setActiveTab('videos')}
-                className="px-12 py-5 bg-[#6C2BFF] rounded-2xl font-black italic tracking-widest hover:scale-105 transition-all shadow-[0_0_30px_rgba(108,43,255,0.4)]"
+              onClick={() => setView('videos')}
+              className="group relative px-12 py-6 bg-[#6C2BFF] rounded-2xl font-black italic tracking-[0.2em] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(108,43,255,0.3)]"
             >
-                ENTER THE FEED
+              <span className="relative z-10">FEED MEGNYITÁSA</span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
           </motion.div>
-        );
-      case 'videos':
-        return (
-          <motion.div key="videos" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-4xl mx-auto h-[70vh] flex flex-col items-center">
-            <div className="w-full aspect-video bg-black rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl relative group">
-              {currentVideo ? (
-                <iframe
-                  className="w-full h-full"
-                  src={`https://www.youtube.com/embed/${currentVideo.youtubeId}?autoplay=1&modestbranding=1`}
-                  title={currentVideo.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-500 italic">
-                  Loading the next hit...
-                </div>
-              )}
-            </div>
+        )}
 
-            {currentVideo && (
-              <div className="w-full mt-8 flex flex-col md:flex-row items-center justify-between gap-6 bg-[#1A1D26] p-8 rounded-[2rem] border border-white/5">
-                <div className="text-left flex-1">
-                  <h3 className="text-2xl font-black tracking-tight">{currentVideo.title}</h3>
-                  <p className="text-[#6C2BFF] font-bold">@{currentVideo.creator}</p>
-                </div>
-                
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Votes</p>
-                    <p className="text-2xl font-black italic">{currentVideo.votes}</p>
-                  </div>
-                  <button 
-                    onClick={() => handleVote(currentVideo.id)}
-                    className="w-16 h-16 bg-[#6C2BFF] hover:bg-red-500 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-90"
-                  >
-                    <HeartIcon filled />
-                  </button>
-                  <button 
-                    onClick={() => setCurrentVideoIndex(prev => prev + 1)}
-                    className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"
-                  >
-                    NEXT →
-                  </button>
+        {/* --- VIDEOS KÓD --- */}
+        {view === 'videos' && (
+          <motion.div 
+            key="videos"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0 }}
+            className="h-screen flex flex-col items-center justify-center p-4 md:p-12 relative"
+          >
+            {/* Vissza gomb */}
+            <button 
+              onClick={() => setView('home')}
+              className="absolute top-8 left-8 text-gray-500 hover:text-white font-bold tracking-widest text-xs uppercase"
+            >
+              ← Vissza a főoldalra
+            </button>
+
+            <div className="w-full max-w-[1000px] flex flex-col md:flex-row gap-8 items-center">
+              
+              {/* YouTube Player Container */}
+              <div className="relative w-full max-w-[400px] aspect-[9/16] bg-black rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5 group">
+                <iframe
+                  className="w-full h-full pointer-events-none"
+                  src={`https://www.youtube.com/embed/${currentVideo.ytId}?autoplay=1&controls=0&modestbranding=1&loop=1&playlist=${currentVideo.ytId}`}
+                  allow="autoplay"
+                ></iframe>
+
+                {/* Like Animáció (Szív robbanás) */}
+                <AnimatePresence>
+                  {showHeart && (
+                    <motion.div 
+                      initial={{ scale: 0, opacity: 1 }}
+                      animate={{ scale: 3, opacity: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
+                    >
+                      <svg width="100" height="100" viewBox="0 0 24 24" fill="#ff2b6d"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Info Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 p-8 flex flex-col justify-end text-left">
+                  <h2 className="text-2xl font-black italic uppercase tracking-tighter leading-none mb-2">{currentVideo.title}</h2>
+                  <p className="text-[#6C2BFF] font-bold text-sm">@{currentVideo.creator}</p>
                 </div>
               </div>
-            )}
-            <p className="mt-4 text-[10px] text-gray-500 font-black tracking-[0.3em] uppercase">
-              Rank Score: {currentVideo?.rank.toFixed(1) || 0} (Higher rank = more frequent appearances)
-            </p>
+
+              {/* Interaction Sidebar */}
+              <div className="flex md:flex-col gap-6 items-center">
+                
+                {/* Like Gomb */}
+                <div className="flex flex-col items-center gap-2">
+                  <button 
+                    onClick={handleLike}
+                    className="w-16 h-16 bg-[#1A1D26] hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all group active:scale-90 border border-white/5"
+                  >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:fill-red-500 group-hover:stroke-red-500 transition-colors"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  </button>
+                  <span className="text-xs font-black text-gray-400">{formatNumber(currentVideo.likes)}</span>
+                </div>
+
+                {/* Szavazás Gomb */}
+                <div className="flex flex-col items-center gap-2">
+                  <button 
+                    onClick={handleVote}
+                    className="w-16 h-16 bg-[#6C2BFF] hover:bg-[#8247FF] rounded-full flex items-center justify-center transition-all active:scale-90 shadow-lg shadow-[#6C2BFF]/20"
+                  >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  </button>
+                  <span className="text-xs font-black text-[#6C2BFF] uppercase tracking-widest">{currentVideo.votes} SZAVAZAT</span>
+                </div>
+
+                {/* Következő videó */}
+                <button 
+                  onClick={() => setCurrentIndex(prev => prev + 1)}
+                  className="mt-8 px-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black tracking-[0.3em] uppercase transition-all"
+                >
+                  KÖVETKEZŐ →
+                </button>
+
+                <div className="mt-4 text-[9px] text-gray-600 font-mono">
+                  RANK SCORE: {currentVideo.rank.toFixed(1)}
+                </div>
+              </div>
+
+            </div>
           </motion.div>
-        );
-      default:
-        return <div className="text-gray-500 italic py-20 uppercase font-black tracking-widest">Coming Soon</div>;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[#0F1117] text-white selection:bg-[#6C2BFF] font-sans">
-      <div className="fixed inset-0 overflow-hidden -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6C2BFF]/10 blur-[150px] rounded-full animate-pulse" />
-      </div>
-
-      {/* DESKTOP SIDEBAR */}
-      <motion.aside 
-        animate={{ width: isSidebarOpen ? 280 : 88 }}
-        className="fixed top-0 left-0 bottom-0 bg-[#1A1D26]/80 backdrop-blur-xl border-r border-white/5 z-50 hidden md:flex flex-col shadow-2xl transition-all"
-      >
-        <div className="p-6 flex items-center justify-between">
-          {isSidebarOpen && <div className="text-xl font-black italic tracking-tighter">CLIPARENA</div>}
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white">
-            <MenuIcon />
-          </button>
-        </div>
-
-        <nav className="flex-1 px-4 py-8 space-y-2">
-          <SidebarNavButton label="HOME" icon={<HomeIcon />} active={activeTab === 'home'} onClick={() => setActiveTab('home')} collapsed={!isSidebarOpen} />
-          <SidebarNavButton label="VIDEOS" icon={<VideoIcon />} active={activeTab === 'videos'} onClick={() => setActiveTab('videos')} collapsed={!isSidebarOpen} />
-          <SidebarNavButton label="CREATE" icon={<PlusIcon />} active={activeTab === 'create'} onClick={() => setActiveTab('create')} collapsed={!isSidebarOpen} isSpecial />
-          <SidebarNavButton label="CREDITS" icon={<CreditsIcon />} active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} collapsed={!isSidebarOpen} />
-        </nav>
-      </motion.aside>
-
-      {/* MAIN */}
-      <motion.main 
-        animate={{ paddingLeft: typeof window !== 'undefined' && window.innerWidth > 768 ? (isSidebarOpen ? 280 : 88) : 0 }}
-        className="relative pt-32 px-6 flex flex-col items-center text-center w-full min-h-screen transition-all"
-      >
-        <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
-      </motion.main>
-
-      {/* MOBILE NAV */}
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] z-50">
-        <nav className="bg-[#1A1D26]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] px-6 py-3 flex justify-between items-center shadow-2xl">
-          <MobileNavButton icon={<HomeIcon />} label="Home" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-          <MobileNavButton icon={<VideoIcon />} label="Feed" active={activeTab === 'videos'} onClick={() => setActiveTab('videos')} />
-          <div className="relative w-12 h-12">
-             <button onClick={() => setActiveTab('create')} className="absolute -top-10 w-14 h-14 bg-[#6C2BFF] rounded-[1.5rem] flex items-center justify-center border-4 border-[#0F1117] shadow-xl"><PlusIcon /></button>
-          </div>
-          <MobileNavButton icon={<CreditsIcon />} label="Credits" active={activeTab === 'credits'} onClick={() => setActiveTab('credits')} />
-          <MobileNavButton icon={<MenuIcon />} label="More" active={activeTab === 'about'} onClick={() => setActiveTab('about')} />
-        </nav>
-      </div>
-    </div>
-  );
-}
-
-function SidebarNavButton({ label, icon, active, onClick, collapsed, isSpecial }: SidebarNavButtonProps) {
-  return (
-    <button onClick={onClick} className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all group relative ${active ? (isSpecial ? 'bg-[#6C2BFF] text-white' : 'bg-white/5 text-white') : 'text-gray-500 hover:text-white hover:bg-white/5'}`}>
-      <div className={active ? 'scale-110' : 'group-hover:scale-110'}>{icon}</div>
-      {!collapsed && <span className="text-[11px] font-black tracking-widest uppercase">{label}</span>}
-      {active && !isSpecial && <div className="absolute left-0 w-1 h-6 bg-[#6C2BFF] rounded-r-full" />}
-    </button>
-  );
-}
-
-function MobileNavButton({ icon, label, active, onClick }: any) {
-  return (
-    <button onClick={onClick} className={`flex flex-col items-center justify-center w-12 gap-1 ${active ? 'text-[#6C2BFF]' : 'text-gray-500'}`}>
-      {icon}<span className="text-[7px] font-black uppercase tracking-widest">{label}</span>
-    </button>
-  );
-}
-
-function QuickActionButton({ icon, label, color }: any) {
-  return (
-    <button className="flex items-center gap-4 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl transition-all w-full sm:w-auto hover:bg-white/10">
-      <span style={{ color }}>{icon}</span><span className="text-[11px] font-black tracking-widest uppercase">{label}</span>
-    </button>
-  );
-}
-
-function DashboardCard({ title, value, desc, icon }: any) {
-  return (
-    <div className="bg-[#1A1D26] border border-white/5 p-8 rounded-[2.5rem] text-left relative overflow-hidden group">
-      <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">{icon}</div>
-      <h3 className="text-[10px] font-black tracking-[0.3em] text-gray-500 uppercase mb-4">{title}</h3>
-      <div className="text-4xl font-black italic mb-2 tracking-tighter">{value}</div>
-      <p className="text-xs text-gray-400 font-light">{desc}</p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
